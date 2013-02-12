@@ -1,0 +1,10 @@
+/**
+ * @file
+ * Right-to-Left styling for the Database Logging module.
+ */
+
+.form-item-type,
+.form-item-severity {
+  margin-right: 0;
+  margin-left: 1em;
+}

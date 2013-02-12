@@ -1,0 +1,199 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the block module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function block_schema() {
+
+  $schema['cache_block'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_block']['description'] = 'Cache table for the Block module to store already built blocks, identified by module, delta, and various contexts which may change the block, such as theme, locale, and caching mode defined for the block.';
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function block_install() {
+
+  // Block should go first so that other modules can alter its output
+  // during hook_page_alter(). Almost everything on the page is a block,
+  // so before block module runs, there will not be much to alter.
+  module_set_weight('block', -5);
+}
+
+/**
+ * @addtogroup updates-7.x-to-8.x
+ * @{
+ */
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function block_update_dependencies() {
+  // Convert role IDs after User module converted {role}.
+  $dependencies['block'][8002] = array(
+    'user' => 8002,
+  );
+  // Migrate users.data after User module prepared the tables.
+  $dependencies['block'][8005] = array(
+    'user' => 8011,
+  );
+  return $dependencies;
+}
+
+/**
+ * Block cache is always enabled in 8.x.
+ *
+ * @ingroup config_upgrade
+ */
+function block_update_8000() {
+  update_variable_del('block_cache');
+}
+
+/**
+ * Creates table {block_language} for language visibility settings per block.
+ */
+function block_update_8001() {
+  $schema = array(
+    'description' => 'Sets up display criteria for blocks based on langcode.',
+    'fields' => array(
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => "The block's origin module, from {block}.module.",
+      ),
+      'delta' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => "The block's unique delta within module, from {block}.delta.",
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => "Language type name. Applied to filter the block by that type.",
+      ),
+      'langcode' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => "The machine-readable name of this language from {language}.langcode.",
+      ),
+    ),
+    'primary key' => array('module', 'delta', 'type', 'langcode'),
+  );
+  db_create_table('block_language', $schema);
+}
+
+/**
+ * Replace serial role IDs with machine name strings.
+ *
+ * @see user_update_8002()
+ */
+function block_update_8002() {
+  // Change serial rid column into string.
+  $column = array(
+    'type' => 'varchar',
+    'length' => 64,
+    'not null' => TRUE,
+    'description' => "The user's role ID from {users_roles}.rid.",
+  );
+  db_change_field('block_role', 'rid', 'rid', $column);
+
+  // Rename the built-in serial role IDs into the hardcoded machine names.
+  db_update('block_role')
+    ->fields(array('rid' => DRUPAL_ANONYMOUS_RID))
+    ->condition('rid', 1)
+    ->execute();
+  db_update('block_role')
+    ->fields(array('rid' => DRUPAL_AUTHENTICATED_RID))
+    ->condition('rid', 2)
+    ->execute();
+}
+
+/**
+ * Increase {block}.title length to 255 characters.
+ */
+function block_update_8003() {
+  db_change_field('block', 'title', 'title', array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'Custom title for the block. (Empty string will use block default title, - None - will remove the title, text will cause block to use specified title.)',
+    'translatable' => TRUE,
+    )
+  );
+}
+
+/**
+ * Rename default menu names.
+ */
+function block_update_8004() {
+  // System menu's new block deltas are prefixed with 'menu-'.
+  $map = array(
+    'navigation' => 'menu-tools',
+    'management' => 'menu-admin',
+    'user-menu' => 'menu-account',
+    'main-menu' => 'menu-main',
+  );
+  foreach ($map as $old => $new) {
+    db_update('block')
+      ->condition('module', 'system')
+      ->condition('delta', $old)
+      ->fields(array('delta' => $new))
+      ->execute();
+    db_update('block_language')
+      ->condition('module', 'system')
+      ->condition('delta', $old)
+      ->fields(array('delta' => $new))
+      ->execute();
+    db_update('block_role')
+      ->condition('module', 'system')
+      ->condition('delta', $old)
+      ->fields(array('delta' => $new))
+      ->execute();
+  }
+}
+
+/**
+ * Migrate {users}.data into {users_data}.
+ */
+function block_update_8005() {
+  $query = db_select('_d7_users_data', 'ud');
+  $query->addField('ud', 'uid');
+  $query->addExpression("'block'", 'module');
+  $query->addExpression("'block'", 'name');
+  // Take over the extracted and serialized value in {_d7_users_data} as-is.
+  $query->addField('ud', 'value');
+  $query->addExpression('1', 'serialized');
+  $query->condition('name', 'block');
+
+  db_insert('users_data')
+    ->from($query)
+    ->execute();
+
+  db_delete('_d7_users_data')
+    ->condition('name', 'block')
+    ->execute();
+}
+
+/**
+ * Enable the Custom Block module.
+ */
+function block_update_8006() {
+  update_module_enable(array('custom_block'));
+}
+
+/**
+ * @} End of "addtogroup updates-7.x-to-8.x".
+ * The next series of updates should start at 9000.
+ */

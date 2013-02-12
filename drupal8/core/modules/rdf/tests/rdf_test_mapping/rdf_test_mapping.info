@@ -1,0 +1,13 @@
+name = "RDF module mapping test"
+description = "Test mapping subscriber for RDF mapping tests."
+package = Testing
+core = 8.x
+hidden = TRUE
+dependencies[] = rdf
+
+; Information added by drupal.org packaging script on 2013-02-12
+version = "8.x-dev"
+core = "8.x"
+project = "drupal"
+datestamp = "1360630733"
+

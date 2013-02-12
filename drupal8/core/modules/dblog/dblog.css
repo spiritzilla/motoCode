@@ -1,0 +1,48 @@
+/**
+ * @file
+ * Admin styles for the Database Logging module.
+ */
+
+.form-item-type,
+.form-item-severity {
+  display: inline-block;
+  margin-right: 1em; /* LTR */
+  margin-top: 0;
+  max-width: 30%;
+}
+#dblog-filter-form .form-actions {
+  display: inline-block;
+  padding: 3ex 0 0;
+  vertical-align: top;
+}
+tr.dblog-user.odd .active {
+  background: #ddf;
+}
+tr.dblog-user.even .active {
+  background: #cce;
+}
+tr.dblog-error.odd .active {
+  background: #ffc9c9;
+}
+tr.dblog-error.even .active {
+  background: #eeb9b9;
+}
+tr.dblog-warning.odd .active {
+  background: #fffdca;
+}
+tr.dblog-warning.even .active {
+  background: #eeedbd;
+}
+table#admin-dblog td.icon {
+  background: no-repeat center;
+  width: 16px;
+}
+table#admin-dblog tr.dblog-warning td.icon {
+  background-image: url(../../misc/message-16-warning.png);
+}
+table#admin-dblog tr.dblog-error td.icon,
+table#admin-dblog tr.dblog-critical td.icon,
+table#admin-dblog tr.dblog-alert td.icon,
+table#admin-dblog tr.dblog-emergency td.icon {
+  background-image: url(../../misc/message-16-error.png);
+}

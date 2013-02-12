@@ -1,0 +1,17 @@
+name = Toolbar
+description = Provides a toolbar that shows the top-level administration menu items and links from other modules.
+core = 8.x
+package = Core
+version = VERSION
+
+dependencies[] = breakpoint
+dependencies[] = menu_link
+
+configure = admin/structure/toolbar
+
+; Information added by drupal.org packaging script on 2013-02-12
+version = "8.x-dev"
+core = "8.x"
+project = "drupal"
+datestamp = "1360630733"
+

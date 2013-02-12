@@ -1,0 +1,6 @@
+/* IE renders monospace font too big. */
+code,
+pre,
+kbd {
+  font-size: 1em;
+}

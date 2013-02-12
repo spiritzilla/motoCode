@@ -1,0 +1,28 @@
+/**
+ * @file
+ * RTL styling for contextual module.
+ */
+
+/**
+ * Contextual links wrappers.
+ */
+.contextual {
+  left: 0;
+  right: auto;
+}
+
+/**
+ * Contextual trigger.
+ */
+.contextual .trigger {
+  float: left;
+}
+
+/**
+ * Contextual links.
+ */
+.contextual .contextual-links {
+  border-radius: 0 4px 4px 4px;
+  float: left;
+  text-align: right;
+}

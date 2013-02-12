@@ -12,7 +12,7 @@
 	
    }
    else {
-   	echo "I am the smallest";
+   	echo "I am the smallest in the land";
 	
    }
 

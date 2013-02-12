@@ -1,6 +1,0 @@
-system.cron:
-  pattern: '/cron/{key}'
-  defaults:
-    _controller: '\Drupal\system\CronController::run'
-  requirements:
-    _access_system_cron: 'TRUE'

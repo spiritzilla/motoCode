@@ -5,8 +5,6 @@ This document describes how to:
   * Update your Drupal site from one minor 7.x version to another minor 7.x
     version; for example, from 7.8 to 7.9, or from 7.6 to 7.10.
 
-  * Upgrade your Drupal site's major version from 6.x to 7.x.
-
 First steps and definitions:
 
   * If you are upgrading to Drupal version x.y, then x is known as the major

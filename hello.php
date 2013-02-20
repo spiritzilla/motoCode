@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Akim Motolola akin.motolola@gmail.com
+ * @author Akin Motolola akin.motolola@gmail.com
  * @copyright 2013
  */
 
